@@ -1,21 +1,16 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
-import { buildFileSystemBarrel } from "./builders/fileSystem";
-import { buildFlatBarrel } from "./builders/flat";
-import { addHeaderPrefix } from "./builders/header";
-import { loadDirectoryModules } from "./modules";
-import { BaseUrl } from "./options/baseUrl";
-import { Logger } from "./options/logger";
-import { SemicolonCharacter } from "./options/noSemicolon";
-import { StructureOption } from "./options/options";
-import { QuoteCharacter } from "./options/quoteCharacter";
-import {
-  convertPathSeparator,
-  Directory,
-  Location,
-  thisDirectory
-} from "./utilities";
+import { buildFileSystemBarrel } from './builders/fileSystem';
+import { buildFlatBarrel } from './builders/flat';
+import { addHeaderPrefix } from './builders/header';
+import { loadDirectoryModules } from './modules';
+import { BaseUrl } from './options/baseUrl';
+import { Logger } from './options/logger';
+import { SemicolonCharacter } from './options/noSemicolon';
+import { StructureOption } from './options/options';
+import { QuoteCharacter } from './options/quoteCharacter';
+import { convertPathSeparator, Directory, Location, thisDirectory } from './utilities';
 
 export function buildBarrels(
   destinations: Directory[],
@@ -33,10 +28,10 @@ export function buildBarrels(
   let builder: BarrelBuilder;
   switch (structure) {
     default:
-    case "flat":
+    case 'flat':
       builder = buildFlatBarrel;
       break;
-    case "filesystem":
+    case 'filesystem':
       builder = buildFileSystemBarrel;
       break;
   }
@@ -114,17 +109,13 @@ export type BarrelBuilder = (
 ) => string;
 
 /** Builds the TypeScript */
-export function buildImportPath(
-  directory: Directory,
-  target: Location,
-  baseUrl: BaseUrl
-): string {
+export function buildImportPath(directory: Directory, target: Location, baseUrl: BaseUrl): string {
   // If the base URL option is set then imports should be relative to there.
   const startLocation = baseUrl ? baseUrl : directory.path;
   const relativePath = path.relative(startLocation, target.path);
   // Get the route and ensure it's relative
   let directoryPath = path.dirname(relativePath);
-  if (directoryPath !== ".") {
+  if (directoryPath !== '.') {
     directoryPath = `.${path.sep}${directoryPath}`;
   }
   // Strip off the .ts or .tsx from the file name.
@@ -136,12 +127,12 @@ export function buildImportPath(
 }
 
 function stripThisDirectory(location: string, baseUrl: BaseUrl) {
-  return baseUrl ? location.replace(thisDirectory, "") : location;
+  return baseUrl ? location.replace(thisDirectory, '') : location;
 }
 
 /** Strips the .ts or .tsx file extension from a path and returns the base filename. */
 export function getBasename(relativePath: string) {
-  const mayBeSuffix = [".ts", ".tsx", ".d.ts"];
+  const mayBeSuffix = ['.ts', '.tsx', '.d.ts'];
   let mayBePath = relativePath;
   mayBeSuffix.map(suffix => {
     const tmpPath = path.basename(relativePath, suffix);
