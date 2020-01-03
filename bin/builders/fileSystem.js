@@ -6,27 +6,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const builder_1 = require("../builder");
 const utilities_1 = require("../utilities");
-function stringify(structure, previousIndentation) {
+function stringify(structure, previousIndentation, quoteCharacter) {
     const nextIndentation = previousIndentation + utilities_1.indentation;
-    let content = "";
+    let content = '';
     for (const key of Object.keys(structure).sort()) {
-        content += `
-${nextIndentation}${key}: `;
+        content += ` \n${nextIndentation}${quoteCharacter}${key.split('.')[0]}${quoteCharacter}:`;
         const exported = structure[key];
-        if (typeof exported === "string") {
-            content += exported;
+        if (typeof exported === 'string') {
+            content += `${exported} as JSONSchema`;
         }
         else {
-            content += stringify(exported, nextIndentation);
+            content += stringify(exported, nextIndentation, quoteCharacter);
         }
-        content += ",";
+        content += ',';
     }
-    return `{${content}
-${previousIndentation}}`;
+    return `{${content}\n${previousIndentation}}`;
 }
 function buildStructureSubsection(structure, pathParts, name, reference) {
     const pathPart = pathParts.shift();
-    let subsection = pathPart === "." ? structure : structure[pathPart];
+    let subsection = pathPart === '.' ? structure : structure[pathPart];
     if (!subsection) {
         subsection = {};
         structure[pathPart] = subsection;
@@ -46,7 +44,7 @@ function compareImports(a, b) {
 function buildFileSystemBarrel(directory, modules, quoteCharacter, semicolonCharacter, _, // Not used
 baseUrl) {
     const structure = {};
-    let content = "";
+    let content = '';
     modules
         .map((module) => ({
         module,
@@ -57,21 +55,18 @@ baseUrl) {
         const relativePath = path_1.default.relative(directory.path, imported.module.path);
         const directoryPath = path_1.default.dirname(relativePath);
         const parts = directoryPath.split(path_1.default.sep);
-        const alias = relativePath.replace(utilities_1.nonAlphaNumeric, "");
-        content += `import * as ${alias} from ${quoteCharacter}${imported.path}${quoteCharacter}${semicolonCharacter}
-`;
-        const fileName = path_1.default.basename(imported.module.name, ".ts");
+        const alias = relativePath.replace(utilities_1.nonAlphaNumeric, '');
+        content += `import ${alias} from ${quoteCharacter}${imported.path}${quoteCharacter}${semicolonCharacter}\n`;
+        const fileName = path_1.default.basename(imported.module.name, '.ts');
         buildStructureSubsection(structure, parts, fileName, alias);
     });
     for (const key of Object.keys(structure).sort()) {
         const exported = structure[key];
-        if (typeof exported === "string") {
-            content += `export {${exported} as ${key}}${semicolonCharacter}
-`;
+        if (typeof exported === 'string') {
+            content += `export {${exported} as ${key.split('.')[0]}}${semicolonCharacter}\n`;
         }
         else {
-            content += `export const ${key} = ${stringify(exported, "")}${semicolonCharacter}
-`;
+            content += `export const ${key} = ${stringify(exported, '', quoteCharacter)}${semicolonCharacter}\n`;
         }
     }
     return content;

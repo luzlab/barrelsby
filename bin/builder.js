@@ -14,10 +14,10 @@ function buildBarrels(destinations, quoteCharacter, semicolonCharacter, barrelNa
     let builder;
     switch (structure) {
         default:
-        case "flat":
+        case 'flat':
             builder = flat_1.buildFlatBarrel;
             break;
-        case "filesystem":
+        case 'filesystem':
             builder = fileSystem_1.buildFileSystemBarrel;
             break;
     }
@@ -56,7 +56,7 @@ function buildImportPath(directory, target, baseUrl) {
     const relativePath = path_1.default.relative(startLocation, target.path);
     // Get the route and ensure it's relative
     let directoryPath = path_1.default.dirname(relativePath);
-    if (directoryPath !== ".") {
+    if (directoryPath !== '.') {
         directoryPath = `.${path_1.default.sep}${directoryPath}`;
     }
     // Strip off the .ts or .tsx from the file name.
@@ -68,11 +68,11 @@ function buildImportPath(directory, target, baseUrl) {
 }
 exports.buildImportPath = buildImportPath;
 function stripThisDirectory(location, baseUrl) {
-    return baseUrl ? location.replace(utilities_1.thisDirectory, "") : location;
+    return baseUrl ? location.replace(utilities_1.thisDirectory, '') : location;
 }
 /** Strips the .ts or .tsx file extension from a path and returns the base filename. */
 function getBasename(relativePath) {
-    const mayBeSuffix = [".ts", ".tsx", ".d.ts"];
+    const mayBeSuffix = ['.ts', '.tsx', '.d.ts'];
     let mayBePath = relativePath;
     mayBeSuffix.map(suffix => {
         const tmpPath = path_1.default.basename(relativePath, suffix);
